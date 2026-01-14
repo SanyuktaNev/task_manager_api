@@ -11,19 +11,20 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object("app.config.Config")
 
-    # Initialize extensions
+
     db.init_app(app)
     jwt.init_app(app)
     migrate.init_app(app, db)
 
-    # CORS Configuration - FIXED
+   
     CORS(
         app,
-        origins=["http://localhost:8000", "http://127.0.0.1:8000"],  # Both origins
+        origins=["http://localhost:8000", "http://127.0.0.1:8000"],  
+        
         supports_credentials=True,
         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allow_headers=["Content-Type", "Authorization"],
-        expose_headers=["Set-Cookie"]  # ← ADDED: Expose cookie headers
+        expose_headers=["Set-Cookie"]  
     )
 
     from app.routes.auth import auth_bp

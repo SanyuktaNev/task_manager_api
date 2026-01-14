@@ -1,8 +1,7 @@
-// -------------------- CONFIG --------------------
-const API_BASE = "http://localhost:5000/api/v1";  // ← CHANGED from 127.0.0.1 to localhost
+const API_BASE = "http://localhost:5000/api/v1";  
 const isDashboard = window.location.pathname.includes("dashboard");
 
-// -------------------- AUTH (LOGIN / REGISTER) --------------------
+
 if (!isDashboard) {
   const formTitle = document.getElementById("form-title");
   const authForm = document.getElementById("auth-form");
@@ -38,7 +37,7 @@ if (!isDashboard) {
       const res = await fetch(`${API_BASE}/auth/${isLogin ? "login" : "register"}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include", // ✅ Good - keeps cookies
+        credentials: "include", 
         body: JSON.stringify(
           isLogin
             ? { username, password }
@@ -50,11 +49,11 @@ if (!isDashboard) {
       if (!res.ok) throw new Error(data.msg || "Error");
 
       if (isLogin) {
-        // redirect to dashboard
+       
         window.location.href = "dashboard.html";
       } else {
         alert("Registered successfully! Please login.");
-        toggleLink.click(); // switch to login
+        toggleLink.click(); 
       }
     } catch (err) {
       errorMsg.textContent = err.message;
@@ -62,32 +61,32 @@ if (!isDashboard) {
   });
 }
 
-// -------------------- DASHBOARD --------------------
+
 else {
   const tasksContainer = document.getElementById("tasks-container");
   const taskForm = document.getElementById("task-form");
   const logoutBtn = document.getElementById("logout-btn");
   const roleBadge = document.getElementById("role-badge");
 
-  window.userRole = "user"; // default
-  window.userId = null; // ← ADDED to store user ID
+  window.userRole = "user"; 
+  window.userId = null; 
 
-  // Load current user info
+ 
   async function loadUserInfo() {
     try {
       const res = await fetch(`${API_BASE}/auth/me`, { credentials: "include" });
       if (!res.ok) throw new Error("Not authenticated");
       const data = await res.json();
       window.userRole = data.role || "user";
-      window.userId = data.user_id; // ← ADDED to store user ID
+      window.userId = data.user_id; 
       roleBadge.textContent = window.userRole.toUpperCase();
     } catch (err) {
       console.error(err);
-      window.location.href = "index.html"; // redirect if not logged in
+      window.location.href = "index.html"; 
     }
   }
 
-  // Fetch tasks
+
   async function fetchTasks() {
     try {
       const res = await fetch(`${API_BASE}/tasks/`, { credentials: "include" });
@@ -119,7 +118,7 @@ else {
     }
   }
 
-  // Delete task
+
   async function deleteTask(id) {
     if (!confirm("Are you sure you want to delete this task?")) return;
     try {
@@ -135,7 +134,7 @@ else {
     }
   }
 
-  // Logout
+  
   logoutBtn.addEventListener("click", async () => {
     try {
       await fetch(`${API_BASE}/auth/logout`, {
@@ -148,7 +147,7 @@ else {
     }
   });
 
-  // Create new task
+  
   taskForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const title = document.getElementById("task-title").value.trim();
@@ -170,7 +169,7 @@ else {
     }
   });
 
-  // Initialize dashboard
+  
   async function initDashboard() {
     await loadUserInfo();
     fetchTasks();
