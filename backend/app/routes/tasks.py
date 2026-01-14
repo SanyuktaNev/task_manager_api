@@ -1,25 +1,21 @@
-# app/routes/tasks.py
-
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from app.models import db, Task, User
 
 task_bp = Blueprint("tasks", __name__)
 
-# -------------------
-# GET all tasks for user
-# -------------------
+
 @task_bp.route("/", methods=["GET"])
 @jwt_required()
 def get_tasks():
-    user_id = int(get_jwt_identity())  # identity is string, convert to int
+    user_id = int(get_jwt_identity())  
     claims = get_jwt()
     role = claims.get("role")
 
     if role == "admin":
-        tasks = Task.query.all()  # admin sees all tasks
+        tasks = Task.query.all()  
     else:
-        tasks = Task.query.filter_by(user_id=user_id).all()  # user sees own tasks
+        tasks = Task.query.filter_by(user_id=user_id).all()  
 
     return jsonify([
         {
@@ -32,9 +28,7 @@ def get_tasks():
     ])
 
 
-# -------------------
-# CREATE a new task
-# -------------------
+
 @task_bp.route("/", methods=["POST"])
 @jwt_required()
 def create_task():
@@ -55,9 +49,7 @@ def create_task():
     return jsonify({"msg": "Task created", "task_id": task.id}), 201
 
 
-# -------------------
-# UPDATE a task
-# -------------------
+
 @task_bp.route("/<int:id>", methods=["PUT"])
 @task_bp.route("/<id>", methods=["PUT"])
 @jwt_required()
@@ -69,7 +61,7 @@ def update_task(id):
 
     task = Task.query.get_or_404(id)
 
-    # Only owner or admin can update
+    
     if task.user_id != user_id and role != "admin":
         return jsonify({"msg": "Forbidden"}), 403
 
@@ -81,11 +73,8 @@ def update_task(id):
     return jsonify({"msg": "Task updated"})
 
 
-# -------------------
-# DELETE a task
-# -------------------
 @task_bp.route("/<id>", methods=["DELETE"])
-@task_bp.route("/<id>/", methods=["DELETE"])  # optional trailing slash
+@task_bp.route("/<id>/", methods=["DELETE"])  
 @jwt_required()
 def delete_task(id):
     try:
@@ -93,10 +82,10 @@ def delete_task(id):
         claims = get_jwt()
         role = claims.get("role")
 
-        # Get the task or return 404 if not found
+        
         task = Task.query.get_or_404(id)
 
-        # Only owner or admin can delete
+       
         if task.user_id != user_id and role != "admin":
             return jsonify({"msg": "Forbidden"}), 403
 
