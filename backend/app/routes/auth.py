@@ -1,7 +1,6 @@
 from flask import Blueprint, request, jsonify, make_response
 from app.models import db, User
 from flask_jwt_extended import create_access_token, set_access_cookies, unset_jwt_cookies, jwt_required, get_jwt_identity, get_jwt
-from flask import make_response
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -51,11 +50,13 @@ def login():
 
     return jsonify({"msg": "Invalid credentials"}), 401
 
+
 @auth_bp.route("/logout", methods=["POST"])
 def logout():
-    response = jsonify({"msg": "Logout successful"})
+    response = make_response(jsonify({"msg": "Logout successful"}))
     unset_jwt_cookies(response)
     return response, 200
+
 
 @auth_bp.route("/me", methods=["GET"])
 @jwt_required()
